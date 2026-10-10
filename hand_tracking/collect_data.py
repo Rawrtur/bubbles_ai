@@ -16,6 +16,8 @@ GESTURES = {
     ord("2"): 2,  # Zeigefinger
     ord("3"): 3,  # OK
     ord("4"): 4,  # cross
+    ord('5'): 5,  # peace
+    ord("6"): 6,  # thump up
 }
 
 mp_hands = mp.solutions.hands

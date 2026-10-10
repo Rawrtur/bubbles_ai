@@ -14,7 +14,7 @@ CSV_PATH = Path("hand_tracking/examples/hand_data.csv")
 MODEL_PATH = Path("hand_tracking/handgesten.pt")
 
 BATCH_SIZE = 32
-EPOCHS = 500
+EPOCHS = 1000
 LEARNING_RATE = 0.001
 
 torch.manual_seed(42)
