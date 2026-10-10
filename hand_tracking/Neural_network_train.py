@@ -75,25 +75,23 @@ train_loader = DataLoader(
 # --------------------------------------------------
 
 class HandGestureNet(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes:int)->None:
         super().__init__()
 
-        self.network = nn.Sequential(
+        self.network: nn.Sequential = nn.Sequential(
             nn.Linear(63, 128),
             nn.ReLU(),
             nn.Dropout(0.2),
-
             nn.Linear(128, 64),
             nn.ReLU(),
-
             nn.Linear(64, num_classes)
         )
 
-    def forward(self, x):
+    def forward(self, x)->nn.Sequential:
         return self.network(x)
 
 
-num_classes = len(set(y.tolist()))
+num_classes:int = len(set(y.tolist()))
 
 model = HandGestureNet(num_classes=num_classes)
 
