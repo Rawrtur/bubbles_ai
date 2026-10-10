@@ -19,7 +19,9 @@ LABELS:dict[int, str] = {
     1: "Offene Hand",
     2: "Zeigefinger",
     3: "Ok",
-    4: "cross"
+    4: "cross",
+    5: "peace",
+    6: "thumb up"
 }
 
 
@@ -49,7 +51,11 @@ class HandGestureNet(nn.Module):
 # --------------------------------------------------
 
 class Gesture_prediction():
-    def __init__(self, model_path:str)->None:
+    def __init__(self,stop_event:bool, file:str="handgesten.pt", communication=None)->None:
+        self.__communication = communication
+        self.__stop_event = stop_event
+        base_dir = Path(__file__).resolve().parent
+        model_path: str = base_dir / file
         if not model_path.exists():
             raise FileNotFoundError(
                 f"Modell nicht gefunden: {model_path}"
@@ -124,7 +130,7 @@ class Gesture_prediction():
 
         try:
             with torch.no_grad():
-                while True:
+                while not self.__stop_event.is_set():
                     success, frame = cap.read()
 
                     if not success:
@@ -172,6 +178,9 @@ class Gesture_prediction():
                             class_id = predicted.item()
                             confidence_value = confidence.item()
 
+                            if self.__communication:
+                                self.__communication.set_data(class_id)
+
                             gesture_name = LABELS.get(
                                 class_id,
                                 f"Klasse {class_id}",
@@ -181,6 +190,8 @@ class Gesture_prediction():
                                 f"{gesture_name} "
                                 f"({confidence_value:.0%})"
                             )
+                        else:
+                            self.__communication.set_data(None)
 
                     # Ergebnis oben im Kamerabild anzeigen
                     cv2.putText(
@@ -209,5 +220,5 @@ class Gesture_prediction():
             cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    GP: Gesture_prediction = Gesture_prediction(MODEL_PATH)
+    GP: Gesture_prediction = Gesture_prediction("handgesten.pt")
     GP.start()
